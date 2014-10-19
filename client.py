@@ -5,7 +5,7 @@ from queue import Queue
 
 # TODO: Add logging
 # TODO: Add threading
-
+# One thread for recv, one for send?
 
 def creat_socket(remote_host, remote_port):
     global s
