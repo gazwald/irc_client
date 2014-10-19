@@ -2,7 +2,7 @@ __author__ = 'user'
 
 import socket
 import threading
-
+from queue import Queue
 
 # TODO: Add logging
 # TODO: Add threading
@@ -34,31 +34,45 @@ def recv_data(data_raw):
     print(data_ascii)
 
 
+def poll():
+    while True:
+        q.put(s.recv(1024))
+        recv_data(q.get())
+
+
 def main():
     creat_socket()
     details = {'login': 'john', 'name': 'John Smith', 'nickname': 'Johnny'}
 
-    recv_data(s.recv(1024))
+    global q
+    q = Queue()
 
-    msg = 'NICK %s' % (details.get('nickname'))
-    send_data(msg)
+    for number in range(4):
+        t = threading.Thread(target=poll)
+        t.daemon = True
+        t.start()
 
-    recv_data(s.recv(1024))
-
-    msg = 'USER %s * *  : %s' % (details.get('login'), details.get('name'))
-    send_data(msg)
-
-    recv_data(s.recv(1024))
-
-    msg = 'JOIN #coveredinlard'
-    send_data(msg)
-
-    recv_data(s.recv(1024))
-
-    msg = 'PRIVMSG #coveredinlard :Hello world!'
-    send_data(msg)
-
-    recv_data(s.recv(1024))
+    # recv_data(s.recv(1024))
+    #
+    # msg = 'NICK %s' % (details.get('nickname'))
+    # send_data(msg)
+    #
+    # recv_data(s.recv(1024))
+    #
+    # msg = 'USER %s * *  : %s' % (details.get('login'), details.get('name'))
+    # send_data(msg)
+    #
+    # recv_data(s.recv(1024))
+    #
+    # msg = 'JOIN #coveredinlard'
+    # send_data(msg)
+    #
+    # recv_data(s.recv(1024))
+    #
+    # msg = 'PRIVMSG #coveredinlard :Hello world!'
+    # send_data(msg)
+    #
+    # recv_data(s.recv(1024))
 
     s.close()
 
