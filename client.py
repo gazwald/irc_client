@@ -1,8 +1,21 @@
 __author__ = 'user'
 
 import socket
+import threading
+
 
 # TODO: Add logging
+# TODO: Add threading
+
+
+def creat_socket():
+    global s
+
+    remote_host = 'localhost'
+    remote_port = 6667
+
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect((remote_host, remote_port))
 
 
 def send_data(message):
@@ -22,14 +35,8 @@ def recv_data(data_raw):
 
 
 def main():
-    # remote_host = 'irc.freenode.org'
-    remote_host = 'localhost'
-    remote_port = 6667
+    creat_socket()
     details = {'login': 'john', 'name': 'John Smith', 'nickname': 'Johnny'}
-
-    global s
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect((remote_host, remote_port))
 
     recv_data(s.recv(1024))
 
