@@ -7,11 +7,8 @@ from queue import Queue
 # TODO: Add threading
 
 
-def creat_socket():
+def creat_socket(remote_host, remote_port):
     global s
-
-    remote_host = 'localhost'
-    remote_port = 6667
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((remote_host, remote_port))
@@ -40,7 +37,7 @@ def poll():
 
 
 def main():
-    creat_socket()
+    creat_socket(remote_host='localhost', remote_port=6667)
     details = {'login': 'john', 'name': 'John Smith', 'nickname': 'Johnny'}
 
     global q
