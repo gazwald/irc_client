@@ -15,6 +15,12 @@ def send_data(message):
     return True
 
 
+def recv_data(data_raw):
+    print('Recieved: ')
+    data_ascii = data_raw.decode('ascii')
+    print(data_ascii)
+
+
 def main():
     # remote_host = 'irc.freenode.org'
     remote_host = 'localhost'
@@ -25,32 +31,27 @@ def main():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((remote_host, remote_port))
 
-    data = s.recv(1024)
-    print("Recieved: ", repr(data))
+    recv_data(s.recv(1024))
 
     msg = 'NICK %s' % (details.get('nickname'))
     send_data(msg)
 
-    data = s.recv(1024)
-    print("Recieved: ", repr(data))
+    recv_data(s.recv(1024))
 
     msg = 'USER %s * *  : %s' % (details.get('login'), details.get('name'))
     send_data(msg)
 
-    data = s.recv(1024)
-    print("Recieved: ", repr(data))
+    recv_data(s.recv(1024))
 
     msg = 'JOIN #coveredinlard'
     send_data(msg)
 
-    data = s.recv(1024)
-    print("Recieved: ", repr(data))
+    recv_data(s.recv(1024))
 
     msg = 'PRIVMSG #coveredinlard :Hello world!'
     send_data(msg)
 
-    data = s.recv(1024)
-    print("Recieved: ", repr(data))
+    recv_data(s.recv(1024))
 
     s.close()
 
