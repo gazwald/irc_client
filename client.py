@@ -6,7 +6,7 @@ import socket
 
 
 def send_data(message):
-    message = bytes(message, 'ascii', errors='skip')
+    message = bytes(message + '\r\n', 'ascii', errors='skip')
     sent_total = 0
     while sent_total < len(message):
         sent = s.send(message[sent_total:])
@@ -34,7 +34,7 @@ def main():
     data = s.recv(1024)
     print("Recieved: ", repr(data))
 
-    msg = 'USER %s 2 *  : %s' % (details.get('login'), details.get('name'))
+    msg = 'USER %s * *  : %s' % (details.get('login'), details.get('name'))
     send_data(msg)
 
     data = s.recv(1024)
