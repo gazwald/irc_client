@@ -28,10 +28,22 @@ def recv_data(data_raw):
     return data_ascii
 
 
+def format_data(data):
+    if 'PING' in data:
+        send_data(data.replace('PING', 'PONG'))
+    elif 'PRIVMSG' in data:
+        split_data = data.split(' ').remove(':')
+        channel = split_data[2]
+        user = split_data[0].split('!')[0]
+        message = split_data[3]
+        print('%s - <%s>: %s' % (channel, user, message))
+    else:
+        print(data)
+
+
 def poll():
     while True:
-        print(recv_data(s.recv(1024)))
-        time.sleep(1)
+        format_data(recv_data(s.recv(1024)))
 
 
 def main():
