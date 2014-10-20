@@ -32,10 +32,12 @@ def format_data(data):
     if 'PING' in data:
         send_data(data.replace('PING', 'PONG'))
     elif 'PRIVMSG' in data:
-        split_data = data.split(' ').remove(':')
+        split_data = data.split(' ')
         channel = split_data[2]
         user = split_data[0].split('!')[0]
+        user = user.strip(':')
         message = split_data[3]
+        message = message.strip(':')
         print('%s - <%s>: %s' % (channel, user, message))
     else:
         print(data)
@@ -58,9 +60,10 @@ def main():
     msg = 'NICK %s' % (details.get('nickname'))
     send_data(msg)
 
-    recv_data(s.recv(1024))
-
     msg = 'USER %s * *  : %s' % (details.get('login'), details.get('name'))
+    send_data(msg)
+
+    msg = 'JOIN #coveredinlard'
     send_data(msg)
 
     while True:
