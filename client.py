@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 import socket
 import threading
-import time
-
-# TODO: Add logging
 
 
 def creat_socket(remote_host, remote_port):
@@ -29,9 +26,7 @@ def recv_data(data_raw):
 
 
 def format_data(data):
-    if 'PING' in data:
-        send_data(data.replace('PING', 'PONG'))
-    elif 'PRIVMSG' in data:
+    if 'PRIVMSG' in data:
         split_data = data.split(' ')
         channel = split_data[2]
         user = split_data[0].split('!')[0]
@@ -39,6 +34,8 @@ def format_data(data):
         message = split_data[3]
         message = message.strip(':')
         print('%s - <%s>: %s' % (channel, user, message))
+    elif 'PING' in data:
+        send_data(data.replace('PING', 'PONG'))
     else:
         print(data)
 
@@ -50,37 +47,43 @@ def poll():
 
 def main():
     creat_socket(remote_host='localhost', remote_port=6667)
-    details = {'login': 'john', 'name': 'John Smith', 'nickname': 'Johnny'}
+    details = {'login': 'john',
+               'name': 'John Smith',
+               'nickname': 'Johnny',
+               'channel': '#coveredinlard'}
 
 
     recv = threading.Thread(target=poll)
     recv.daemon = True
     recv.start()
 
-    msg = 'NICK %s' % (details.get('nickname'))
-    send_data(msg)
-
-    msg = 'USER %s * *  : %s' % (details.get('login'), details.get('name'))
-    send_data(msg)
-
-    msg = 'JOIN #coveredinlard'
+    msg = 'JOIN %s' % details.get('channel')
     send_data(msg)
 
     while True:
-        value = input("Type command: ")
-        if 'quit' in value:
-            break
-        elif 'join' in value:
-            msg = 'JOIN %s' % value.split(' ')[1]
-            send_data(msg)
+        value = input('> ')
+        if '/' in value:
+            if 'quit' in value.lower():
+                msg = 'QUIT :Client quit.'
+                send_data(msg)
+                break
+            elif 'join' in value.lower():
+                msg = 'JOIN %s' % value.split(' ')[1]
+                send_data(msg)
+            elif 'nick' in value.lower():
+                user = value.split(' ')[1]
+                msg = 'NICK %s' % user
+                send_data(msg)
+                msg = 'USER %s * *  : %s' % (user, user)
+                send_data(msg)
+            else:
+                # I don't know what you wanted to do
+                # Send it and hope for the best
+                send_data(value)
         else:
             msg = 'PRIVMSG #coveredinlard :%s' % value
             send_data(msg)
 
-    # msg = 'NICK %s' % (details.get('nickname'))
-    # msg = 'USER %s * *  : %s' % (details.get('login'), details.get('name'))
-    # msg = 'JOIN #coveredinlard'
-    # msg = 'PRIVMSG #coveredinlard :Hello world!'
 
 if __name__ == "__main__":
     main()
