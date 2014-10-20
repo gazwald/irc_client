@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 import socket
 import threading
-from queue import Queue
+import time
 
 # TODO: Add logging
-# TODO: Add threading
-# One thread for recv, one for send?
+
 
 def creat_socket(remote_host, remote_port):
     global s
@@ -25,53 +24,49 @@ def send_data(message):
 
 
 def recv_data(data_raw):
-    print('Recieved: ')
     data_ascii = data_raw.decode('ascii')
-    print(data_ascii)
+    return data_ascii
 
 
 def poll():
     while True:
-        q.put(s.recv(1024))
-        recv_data(q.get())
+        print(recv_data(s.recv(1024)))
+        time.sleep(1)
 
 
 def main():
     creat_socket(remote_host='localhost', remote_port=6667)
     details = {'login': 'john', 'name': 'John Smith', 'nickname': 'Johnny'}
 
-    global q
-    q = Queue()
 
-    for number in range(4):
-        t = threading.Thread(target=poll)
-        t.daemon = True
-        t.start()
+    recv = threading.Thread(target=poll)
+    recv.daemon = True
+    recv.start()
 
-    # recv_data(s.recv(1024))
-    #
+    msg = 'NICK %s' % (details.get('nickname'))
+    send_data(msg)
+
+    recv_data(s.recv(1024))
+
+    msg = 'USER %s * *  : %s' % (details.get('login'), details.get('name'))
+    send_data(msg)
+
+    while True:
+        value = input("Type command: ")
+        if 'quit' in value:
+            break
+        elif 'join' in value:
+            msg = 'JOIN %s' % value.split(' ')[1]
+            send_data(msg)
+        else:
+            msg = 'PRIVMSG #coveredinlard :%s' % value
+            send_data(msg)
+
     # msg = 'NICK %s' % (details.get('nickname'))
-    # send_data(msg)
-    #
-    # recv_data(s.recv(1024))
-    #
     # msg = 'USER %s * *  : %s' % (details.get('login'), details.get('name'))
-    # send_data(msg)
-    #
-    # recv_data(s.recv(1024))
-    #
     # msg = 'JOIN #coveredinlard'
-    # send_data(msg)
-    #
-    # recv_data(s.recv(1024))
-    #
     # msg = 'PRIVMSG #coveredinlard :Hello world!'
-    # send_data(msg)
-    #
-    # recv_data(s.recv(1024))
-
-    s.close()
-
 
 if __name__ == "__main__":
     main()
+    s.close()
