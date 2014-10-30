@@ -17,6 +17,8 @@ def creat_socket(remote_host, remote_port):
 
 def send_data(message):
     message = bytes(message + '\r\n', 'ascii', errors='skip')
+
+
     sent_total = 0
     while sent_total < len(message):
         sent = s.send(message[sent_total:])
@@ -55,9 +57,6 @@ def poll():
 def get_args():
     parser = argparse.ArgumentParser(description='Connect to an IRC server')
     parser.add_argument('--server', required=True)
-    parser.add_argument('--user', required=True)
-    parser.add_argument('--nick', required=True)
-    parser.add_argument('--name', required=True)
 
     return parser.parse_args()
 
@@ -65,21 +64,11 @@ def get_args():
 def main():
     args = get_args()
 
-    for arg in args:
-        logging.debug(arg)
-
     creat_socket(remote_host=args.server, remote_port=6667)
-
-    details = {'login': args.user,
-               'name': args.name,
-               'nickname': args.nick}
 
     recv = threading.Thread(target=poll)
     recv.daemon = True
     recv.start()
-
-    msg = 'JOIN %s' % details.get('channel')
-    send_data(msg)
 
     current_channel = None
 
