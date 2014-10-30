@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 import socket
 import threading
+import logging
+import argparse
+
+
+logging.basicConfig(filename='irc_client.log',level=logging.DEBUG)
 
 
 def creat_socket(remote_host, remote_port):
@@ -26,6 +31,8 @@ def recv_data(data_raw):
 
 
 def format_data(data):
+    logging.debug(data)
+
     if 'PRIVMSG' in data:
         split_data = data.split(' ')
         channel = split_data[2]
@@ -45,13 +52,27 @@ def poll():
         format_data(recv_data(s.recv(1024)))
 
 
-def main():
-    creat_socket(remote_host='localhost', remote_port=6667)
-    details = {'login': 'john',
-               'name': 'John Smith',
-               'nickname': 'Johnny',
-               'channel': '#coveredinlard'}
+def get_args():
+    parser = argparse.ArgumentParser(description='Connect to an IRC server')
+    parser.add_argument('--server', required=True)
+    parser.add_argument('--user', required=True)
+    parser.add_argument('--nick', required=True)
+    parser.add_argument('--name', required=True)
 
+    return parser.parse_args()
+
+
+def main():
+    args = get_args()
+
+    for arg in args:
+        logging.debug(arg)
+
+    creat_socket(remote_host=args.server, remote_port=6667)
+
+    details = {'login': args.user,
+               'name': args.name,
+               'nickname': args.nick}
 
     recv = threading.Thread(target=poll)
     recv.daemon = True
@@ -59,6 +80,8 @@ def main():
 
     msg = 'JOIN %s' % details.get('channel')
     send_data(msg)
+
+    current_channel = None
 
     while True:
         value = input('> ')
@@ -68,7 +91,11 @@ def main():
                 send_data(msg)
                 break
             elif 'join' in value.lower():
-                msg = 'JOIN %s' % value.split(' ')[1]
+                channel = value.split(' ')[1]
+                if current_channel is None:
+                    current_channel = channel
+
+                msg = 'JOIN %s' % channel
                 send_data(msg)
             elif 'nick' in value.lower():
                 user = value.split(' ')[1]
@@ -76,12 +103,15 @@ def main():
                 send_data(msg)
                 msg = 'USER %s * *  : %s' % (user, user)
                 send_data(msg)
+            elif 'switch' in value.lower():
+                current_channel = value.split()[1]
+
             else:
                 # I don't know what you wanted to do
                 # Send it and hope for the best
                 send_data(value)
         else:
-            msg = 'PRIVMSG #coveredinlard :%s' % value
+            msg = 'PRIVMSG %s :%s' % (current_channel, value)
             send_data(msg)
 
 
