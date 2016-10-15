@@ -15,7 +15,9 @@ class Client:
     def __init__(self, remote_host, remote_port=6667):
         """
         Create a socket and connect to the server.
+        If connection is successful start polling thread.
         """
+
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
             self.s.connect((remote_host, remote_port))
@@ -26,11 +28,19 @@ class Client:
             self.start_polling()
 
     def start_polling(self):
+        """
+        Creates a thread to continually recieve data from socket.
+        """
+
         self.poller = threading.Thread(target=self.poll)
         self.poller.daemon = True
         self.poller.start()
 
     def send(self, message):
+        """
+        Formats messages/commands to send to the server.
+        """
+
         message = bytes(message + '\r\n', 'ascii', errors='skip')
 
         sent_total = 0
@@ -39,6 +49,11 @@ class Client:
             sent_total += sent
 
     def format_data(self, data):
+        """
+        Attempts to format the data into something readable.
+        Otherwise it'll just dump whatever it gets.
+        """
+
         if data != self.previous_message:
             logging.debug(data)
 
@@ -59,10 +74,17 @@ class Client:
         self.previous_message = data
 
     def recv(self, data):
-        data_ascii = data.decode('ascii')
-        return data_ascii
+        """
+        Can't remember why I'm doing this.
+        """
+
+        return data.decode('ascii')
 
     def poll(self):
+        """
+        While the socket is alive attempt to recieve data
+        """
+
         while True:
             if self.poller.is_alive():
                 self.format_data(self.recv(self.s.recv(1024)))
@@ -70,6 +92,10 @@ class Client:
                 break
 
     def quit(self, message):
+        """
+        Close the socket and perform any other cleanup tasks
+        """
+
         self.s.close()
         sys.exit(message)
 
