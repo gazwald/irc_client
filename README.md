@@ -10,4 +10,4 @@ If there's time I'll clean it up.
 Written for Python 3.4
 
 Usage: 
-./client.py --server <irc.localhost.org> --user noob
+./client.py --server localhost --user noob
