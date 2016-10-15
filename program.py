@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 import logging
 import argparse
+import os
 
 from irc import client
 
-logging.basicConfig(filename='irc_client.log',
+
+log_name = "%s.log" % os.path.basename(__file__)
+logging.basicConfig(filename=log_name,
                     format='%(asctime)s %(message)s',
                     level=logging.DEBUG)
 
