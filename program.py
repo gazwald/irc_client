@@ -34,10 +34,7 @@ def main():
         value = input('> ')
         if '/' in value:
             if 'quit' in value.lower():
-                msg = 'QUIT :Client quit.'
-                new_client.send(msg)
                 new_client.quit()
-                break
             elif 'join' in value.lower():
                 channel = value.split(' ')[1]
                 if current_channel is None:
@@ -47,7 +44,6 @@ def main():
                 new_client.send(msg)
             elif 'switch' in value.lower():
                 current_channel = value.split()[1]
-
             else:
                 # I don't know what you wanted to do
                 # Send it and hope for the best

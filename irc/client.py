@@ -94,5 +94,7 @@ class Client:
         Close the socket and perform any other cleanup tasks
         """
 
+        msg = 'QUIT :Client quit.'
+        self.send(msg)
         self.s.close()
         sys.exit(message)
