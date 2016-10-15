@@ -25,6 +25,9 @@ def main():
 
     new_client = client.Client(remote_host=args.server)
 
+    if args.user:
+        new_client.set_user(args.user)
+
     current_channel = None
 
     while True:
@@ -41,11 +44,6 @@ def main():
                     current_channel = channel
 
                 msg = 'JOIN %s' % channel
-                new_client.send(msg)
-            elif 'nick' in value.lower():
-                msg = 'NICK %s' % args.user
-                new_client.send(msg)
-                msg = 'USER %s * *  : %s' % (args.user, args.user)
                 new_client.send(msg)
             elif 'switch' in value.lower():
                 current_channel = value.split()[1]

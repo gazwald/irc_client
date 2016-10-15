@@ -85,6 +85,10 @@ class Client:
             else:
                 break
 
+    def set_user(self, user):
+        self.send('NICK %s' % user)
+        self.send('USER %s * *  : %s' % (user, user))
+
     def quit(self, message):
         """
         Close the socket and perform any other cleanup tasks
