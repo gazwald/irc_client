@@ -75,10 +75,7 @@ class Client:
         Can't remember why I'm doing this.
         """
 
-        try:
-            return data.decode('ascii')
-        except UnicodeDecodeError:
-            return "This string has unicode in it."
+        return data.decode('utf8')
 
     def poll(self):
         """
