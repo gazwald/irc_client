@@ -54,6 +54,7 @@ class Client:
         Attempts to format the data into something readable.
         Otherwise it'll just dump whatever it gets.
         """
+        logging.debug(data)
 
         if 'PRIVMSG' in data:
             split_data = data.split(' ')
@@ -64,6 +65,7 @@ class Client:
             message = message.strip(':')
             print('%s - <%s>: %s' % (channel, user, message))
         elif 'PING' in data:
+            logging.debug("Sending PONG...")
             self.send(data.replace('PING', 'PONG'))
         else:
             print(data)
@@ -73,10 +75,8 @@ class Client:
         Can't remember why I'm doing this.
         """
 
-        logging.debug(data)
         try:
-            decoded = data.decode('ascii')
-            return decoded
+            return data.decode('ascii')
         except UnicodeDecodeError:
             return "This string has unicode in it."
 

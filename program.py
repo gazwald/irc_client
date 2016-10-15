@@ -28,8 +28,6 @@ def main():
     if args.user:
         new_client.set_user(args.user)
 
-    current_channel = None
-
     while True:
         value = input('> ')
         if '/' in value:
@@ -37,14 +35,12 @@ def main():
                 new_client.quit("Leaving")
             elif 'join' in value.lower():
                 new_client.set_channel(value.split(' ')[1])
-            elif 'switch' in value.lower():
-                current_channel = value.split()[1]
             else:
                 # I don't know what you wanted to do
                 # Send it and hope for the best
                 new_client.send(value)
         else:
-            msg = 'PRIVMSG %s :%s' % (current_channel, value)
+            msg = 'PRIVMSG %s :%s' % (new_client.get_channel(), value)
             new_client.send(msg)
 
 
