@@ -39,8 +39,13 @@ class Client:
 
         sent_total = 0
         while sent_total < len(message):
-            sent = self.s.send(message[sent_total:])
-            sent_total += sent
+            try:
+                sent = self.s.send(message[sent_total:])
+                sent_total += sent
+            except socket.BrokenPipeError:
+                logging.debug("Socket timeout?")
+                print("Disconnected")
+                break
 
     def format_data(self, data):
         """
@@ -48,8 +53,7 @@ class Client:
         Otherwise it'll just dump whatever it gets.
         """
 
-        if data != self.previous_message:
-            logging.debug(data)
+        logging.debug(data)
 
         if 'PRIVMSG' in data:
             split_data = data.split(' ')
@@ -62,17 +66,18 @@ class Client:
         elif 'PING' in data:
             self.send(data.replace('PING', 'PONG'))
         else:
-            if data != self.previous_message:
-                print(data)
-
-        self.previous_message = data
+            print(data)
 
     def recv(self, data):
         """
         Can't remember why I'm doing this.
         """
 
-        return data.decode('ascii')
+        try:
+            decoded = data.decode('ascii')
+            return decoded
+        except UnicodeDecodeError:
+            return None
 
     def poll(self):
         """

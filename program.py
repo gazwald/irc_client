@@ -34,7 +34,7 @@ def main():
         value = input('> ')
         if '/' in value:
             if 'quit' in value.lower():
-                new_client.quit()
+                new_client.quit("Leaving")
             elif 'join' in value.lower():
                 channel = value.split(' ')[1]
                 if current_channel is None:
