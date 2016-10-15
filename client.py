@@ -34,7 +34,7 @@ class Client:
 
         sent_total = 0
         while sent_total < len(message):
-            sent = s.send(message[sent_total:])
+            sent = self.s.send(message[sent_total:])
             sent_total += sent
 
 
@@ -65,6 +65,7 @@ class Client:
             if self.poller.is_alive():
                 self.format_data(self.recv(self.s.recv(1024)))
             else:
+                self.quit()
                 sys.exit("Poller died, bailing...")
                 break
 
