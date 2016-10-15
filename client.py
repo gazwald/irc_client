@@ -25,12 +25,10 @@ class Client:
             self.previous_message = ""
             self.start_polling()
 
-
     def start_polling(self):
         self.poller = threading.Thread(target=self.poll)
         self.poller.daemon = True
         self.poller.start()
-
 
     def send(self, message):
         message = bytes(message + '\r\n', 'ascii', errors='skip')
@@ -40,11 +38,9 @@ class Client:
             sent = self.s.send(message[sent_total:])
             sent_total += sent
 
-
     def format_data(self, data):
         if data != self.previous_message:
             logging.debug(data)
-
 
         if 'PRIVMSG' in data:
             split_data = data.split(' ')
@@ -62,11 +58,9 @@ class Client:
 
         self.previous_message = data
 
-
     def recv(self, data):
         data_ascii = data.decode('ascii')
         return data_ascii
-
 
     def poll(self):
         while True:
@@ -74,7 +68,6 @@ class Client:
                 self.format_data(self.recv(self.s.recv(1024)))
             else:
                 break
-
 
     def quit(self, message):
         self.s.close()
