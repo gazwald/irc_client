@@ -18,7 +18,7 @@ class Client:
         try:
             self.s.connect((remote_host, remote_port))
         except socket.error:
-            sys.exit("Socket error, bailing...")
+            self.quit("Socket error, bailing...")
         else:
             self.start_polling()
 
@@ -65,13 +65,12 @@ class Client:
             if self.poller.is_alive():
                 self.format_data(self.recv(self.s.recv(1024)))
             else:
-                self.quit()
-                sys.exit("Poller died, bailing...")
-                break
+                self.quit("Poller died? Bailing...")
 
 
-    def quit(self):
+    def quit(self, message):
         self.s.close()
+        sys.exit(message)
 
 
 def get_args():
