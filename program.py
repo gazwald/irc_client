@@ -35,6 +35,8 @@ def main():
                 new_client.quit("Leaving")
             elif 'join' in value.lower():
                 new_client.set_channel(value.split(' ')[1])
+            elif 'switch' in value.lower():
+                new_client.switch_channel(value.split(' ')[1])
             else:
                 # I don't know what you wanted to do
                 # Send it and hope for the best

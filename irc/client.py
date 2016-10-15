@@ -6,6 +6,7 @@ import sys
 
 
 class Client:
+    channels = []
     current_channel = None
 
     def __init__(self, remote_host, remote_port=6667):
@@ -93,19 +94,31 @@ class Client:
         self.send('USER %s * *  : %s' % (user, user))
 
     def set_channel(self, channel):
-        msg = 'JOIN %s' % channel
-        self.send(msg)
+        if channel not in self.channels:
+            msg = 'JOIN %s' % channel
+            self.send(msg)
+
         self.current_channel = channel
+        self.channels.append(channel)
 
     def get_channel(self):
         return self.current_channel
+
+    def switch_channel(self, channel):
+        if channel not in self.channels:
+            self.set_channel(channel)
+            self.channels.append(channel)
+        else:
+            channel = self.current_channel
+
+        logging.debug("Current channels: %s" % self.channels)
 
     def quit(self, message):
         """
         Close the socket and perform any other cleanup tasks
         """
 
-        msg = 'QUIT :Client quit.'
+        msg = 'QUIT :Client quit (%s).' % message
         self.send(msg)
         self.s.close()
         sys.exit(message)
