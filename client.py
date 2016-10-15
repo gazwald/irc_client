@@ -6,7 +6,9 @@ import argparse
 import sys
 
 
-logging.basicConfig(filename='irc_client.log',level=logging.DEBUG)
+logging.basicConfig(filename='irc_client.log',
+                    format='%(asctime)s %(message)s',
+                    level=logging.DEBUG)
 
 
 class Client:
@@ -65,7 +67,7 @@ class Client:
             if self.poller.is_alive():
                 self.format_data(self.recv(self.s.recv(1024)))
             else:
-                self.quit("Poller died? Bailing...")
+                break
 
 
     def quit(self, message):
