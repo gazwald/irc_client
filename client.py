@@ -22,6 +22,7 @@ class Client:
         except socket.error:
             self.quit("Socket error, bailing...")
         else:
+            self.previous_message = ""
             self.start_polling()
 
 
@@ -41,7 +42,9 @@ class Client:
 
 
     def format_data(self, data):
-        logging.debug(data)
+        if data != self.previous_message:
+            logging.debug(data)
+
 
         if 'PRIVMSG' in data:
             split_data = data.split(' ')
@@ -54,7 +57,10 @@ class Client:
         elif 'PING' in data:
             self.send(data.replace('PING', 'PONG'))
         else:
-            print(data)
+            if data != self.previous_message:
+                print(data)
+
+        self.previous_message = data
 
 
     def recv(self, data):
