@@ -6,6 +6,8 @@ import sys
 
 
 class Client:
+    current_channel = None
+
     def __init__(self, remote_host, remote_port=6667):
         """
         Create a socket and connect to the server.
@@ -53,8 +55,6 @@ class Client:
         Otherwise it'll just dump whatever it gets.
         """
 
-        logging.debug(data)
-
         if 'PRIVMSG' in data:
             split_data = data.split(' ')
             channel = split_data[2]
@@ -73,11 +73,12 @@ class Client:
         Can't remember why I'm doing this.
         """
 
+        logging.debug(data)
         try:
             decoded = data.decode('ascii')
             return decoded
         except UnicodeDecodeError:
-            return None
+            return "This string has unicode in it."
 
     def poll(self):
         """
@@ -93,6 +94,14 @@ class Client:
     def set_user(self, user):
         self.send('NICK %s' % user)
         self.send('USER %s * *  : %s' % (user, user))
+
+    def set_channel(self, channel):
+        msg = 'JOIN %s' % channel
+        self.send(msg)
+        self.current_channel = channel
+
+    def get_channel(self):
+        return self.current_channel
 
     def quit(self, message):
         """

@@ -36,12 +36,7 @@ def main():
             if 'quit' in value.lower():
                 new_client.quit("Leaving")
             elif 'join' in value.lower():
-                channel = value.split(' ')[1]
-                if current_channel is None:
-                    current_channel = channel
-
-                msg = 'JOIN %s' % channel
-                new_client.send(msg)
+                new_client.set_channel(value.split(' ')[1])
             elif 'switch' in value.lower():
                 current_channel = value.split()[1]
             else:
