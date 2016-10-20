@@ -97,9 +97,9 @@ class Client:
         if channel not in self.channels:
             msg = 'JOIN %s' % channel
             self.send(msg)
+            self.channels.append(channel)
 
         self.current_channel = channel
-        self.channels.append(channel)
 
     def get_channel(self):
         return self.current_channel
