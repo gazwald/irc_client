@@ -32,7 +32,7 @@ def main():
         value = input('> ')
         if '/' in value:
             if 'quit' in value.lower():
-                new_client.quit("Leaving")
+                new_client.quit(value.split(' ')[1])
             elif 'join' in value.lower():
                 new_client.set_channel(value.split(' ')[1])
             elif 'switch' in value.lower():
