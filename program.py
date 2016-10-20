@@ -29,21 +29,24 @@ def main():
         new_client.set_user(args.user)
 
     while True:
-        value = input('> ')
-        if '/' in value:
-            if 'quit' in value.lower():
-                new_client.quit(value.split(' ')[1])
-            elif 'join' in value.lower():
-                new_client.set_channel(value.split(' ')[1])
-            elif 'switch' in value.lower():
-                new_client.switch_channel(value.split(' ')[1])
+        try:
+            value = input('> ')
+            if '/' in value:
+                if 'quit' in value.lower():
+                    new_client.quit(value.split(' ')[1])
+                elif 'join' in value.lower():
+                    new_client.set_channel(value.split(' ')[1])
+                elif 'switch' in value.lower():
+                    new_client.switch_channel(value.split(' ')[1])
+                else:
+                    # I don't know what you wanted to do
+                    # Send it and hope for the best
+                    new_client.send(value)
             else:
-                # I don't know what you wanted to do
-                # Send it and hope for the best
-                new_client.send(value)
-        else:
-            msg = 'PRIVMSG %s :%s' % (new_client.get_channel(), value)
-            new_client.send(msg)
+                msg = 'PRIVMSG %s :%s' % (new_client.get_channel(), value)
+                new_client.send(msg)
+        except KeyboardInterrupt:
+            new_client.quit("CTRL+C'ed away")
 
 
 if __name__ == "__main__":
