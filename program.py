@@ -6,12 +6,6 @@ import os
 from irc import client
 
 
-log_name = "%s.log" % os.path.basename(__file__)
-logging.basicConfig(filename=log_name,
-                    format='%(asctime)s %(message)s',
-                    level=logging.DEBUG)
-
-
 def get_args():
     parser = argparse.ArgumentParser(description='Connect to an IRC server')
     parser.add_argument('--server', required=True)
@@ -50,4 +44,9 @@ def main():
 
 
 if __name__ == "__main__":
+    log_name = "%s.log" % os.path.basename(__file__)
+    logging.basicConfig(filename=log_name,
+                        format='%(asctime)s %(message)s',
+                        level=logging.DEBUG)
+
     main()
